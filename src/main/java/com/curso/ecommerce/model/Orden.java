@@ -105,6 +105,4 @@ public class Orden {
     public String toString() {
         return "Orden{" + "id=" + id + ", numero=" + numero + ", fechaCreacion=" + fechaCreacion + ", fechaRecibida=" + fechaRecibida + ", total=" + total + '}';
     }
-    
-    
 }

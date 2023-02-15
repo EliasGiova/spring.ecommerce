@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,7 +24,7 @@ public class DetalleOrden {
     @OneToOne
     private Orden orden;
     
-    @OneToOne
+    @ManyToOne
     private Producto producto;
 
     public DetalleOrden() {
@@ -99,6 +100,4 @@ public class DetalleOrden {
     public String toString() {
         return "DetalleOrden{" + "id=" + id + ", nombre=" + nombre + ", cantidad=" + cantidad + ", precio=" + precio + ", total=" + total + '}';
     }
-    
-    
 }

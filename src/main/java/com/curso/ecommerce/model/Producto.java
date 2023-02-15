@@ -28,15 +28,15 @@ public class Producto {
     public Producto() {
     }
 
-    public Producto(Integer id, String nombre, String descripcion, String imagen, int cantidad, Usuario usuario) {
+    public Producto(Integer id, String nombre, String descripcion, String imagen, double precio, int cantidad, Usuario usuario) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.imagen = imagen;
+        this.precio = precio;
         this.cantidad = cantidad;
         this.usuario = usuario;
     }
-
     
     public Usuario getUsuario() {
         return usuario;
@@ -82,7 +82,7 @@ public class Producto {
     public double getPrecio() {
         return precio;
     }
-
+    
     public void setPrecio(double precio) {
         this.precio = precio;
     }
@@ -99,6 +99,4 @@ public class Producto {
     public String toString() {
         return "Producto{" + "id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", imagen=" + imagen + ", precio=" + precio + ", cantidad=" + cantidad + '}';
     }
-    
-    
 }
