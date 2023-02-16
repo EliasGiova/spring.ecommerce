@@ -47,12 +47,12 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td >Nombre</td>
-                  <td >Precio</td>
-                  <td>Cantidad</td>
-                  <td >Total</td>
-                  <td><a href="#" class="btn btn-danger">Quitar</a></td>
+                <tr th:each="dorden : ${cart}">
+                  <td th:text="${dorden.nombre}"></td>
+                  <td th:text="${dorden.precio}"></td>
+                  <td th:text="${dorden.cantidad}"></td>
+                  <td th:text="${dorden.total}"></td>
+                  <td><a th:href="@{/delete/cart/{id} (id=${dorden.producto.id}) }" class="btn btn-danger">Quitar</a></td>
                 </tr>
               </tbody>
             </table>
@@ -62,7 +62,7 @@
             <h2 class="card-title">SUBTOTAL</h2>
 
             <ul class="list-group">
-              <li class="list-group-item"><h5>Total: $ 10</h5></li>
+              <li class="list-group-item"><h5 th:text=" 'Total: $' + ${orden.total}"></h5></li>
               <a href="resumenorden.html" class="btn btn-dark">Ver Orden</a>
             </ul>
           </div>
