@@ -4,6 +4,8 @@ package com.curso.ecommerce.controller;
 import com.curso.ecommerce.model.DetalleOrden;
 import com.curso.ecommerce.model.Orden;
 import com.curso.ecommerce.model.Producto;
+import com.curso.ecommerce.model.Usuario;
+import com.curso.ecommerce.service.IUsuarioService;
 import com.curso.ecommerce.service.ProductoService;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +35,20 @@ public class HomeController {
     //datos de la orden
     Orden orden = new Orden();
     
+    @Autowired
+    private IUsuarioService usuarioService;
+    
     @GetMapping("")
     public String home(Model model){
         model.addAttribute("productos", productoService.findAll());
         return "usuario/home";
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////
+    
+    
+    
     
     //busca el id del producto y lo manda hacia otra vista con informacion del producto
     @GetMapping("productohome/{id}")
@@ -58,6 +69,7 @@ public class HomeController {
         Producto producto = new Producto();
         double sumaTotal=0;
         
+        
         Optional<Producto>optionalProducto = productoService.get(id);
         logger.info("Producto añadido {}", optionalProducto.get());
         logger.info("Cantidad : {}", cantidad);
@@ -69,7 +81,12 @@ public class HomeController {
         detalleOrden.setTotal(producto.getPrecio()*cantidad);
         detalleOrden.setProducto(producto);
         
-        detalles.add(detalleOrden);
+        //validar que el producto no se aña dos veces a la lista
+        Integer idProducto = producto.getId();
+        boolean ingresado = detalles.stream().anyMatch(p -> p.getProducto().getId()==idProducto);
+        if (!ingresado) {
+            detalles.add(detalleOrden);
+        }
         
         sumaTotal = detalles.stream().mapToDouble(dt->dt.getTotal()).sum();
         
@@ -107,5 +124,24 @@ public class HomeController {
         model.addAttribute("orden", orden);
         
         return "usuario/carrito";
+    }
+    
+    @GetMapping("/getCart")
+    public String getCart(Model model){
+        model.addAttribute("cart", detalles);
+        model.addAttribute("orden", orden);
+        return "/usuario/carrito";
+    }
+    
+    @GetMapping("/order")
+    public String order(Model model){
+        
+        Usuario usuario = usuarioService.findById(1).get();
+        
+        model.addAttribute("cart", detalles);
+        model.addAttribute("orden", orden);
+        model.addAttribute("usuario", usuario);
+        
+        return "/usuario/resumenorden";
     }
 }
