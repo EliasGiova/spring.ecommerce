@@ -5,11 +5,15 @@ import com.curso.ecommerce.model.DetalleOrden;
 import com.curso.ecommerce.model.Orden;
 import com.curso.ecommerce.model.Producto;
 import com.curso.ecommerce.model.Usuario;
+import com.curso.ecommerce.service.IDetalleOrdenService;
+import com.curso.ecommerce.service.IOrdenService;
 import com.curso.ecommerce.service.IUsuarioService;
 import com.curso.ecommerce.service.ProductoService;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,26 +33,28 @@ public class HomeController {
     @Autowired//inyecta al contenedor una instancia
     private ProductoService productoService;
     
+    @Autowired
+    private IOrdenService ordenService;
+            
+    @Autowired
+    private IDetalleOrdenService detalleOrdenService;
+    
+    @Autowired
+    private IUsuarioService usuarioService;
+    
     //para almacenar los detalles de la orden
     private List<DetalleOrden> detalles = new ArrayList<DetalleOrden>();
     
     //datos de la orden
     Orden orden = new Orden();
     
-    @Autowired
-    private IUsuarioService usuarioService;
+     ///////////////////////////////////////////////////////////////////////////////////
     
     @GetMapping("")
     public String home(Model model){
         model.addAttribute("productos", productoService.findAll());
         return "usuario/home";
     }
-    
-    
-    ///////////////////////////////////////////////////////////////////////////////////
-    
-    
-    
     
     //busca el id del producto y lo manda hacia otra vista con informacion del producto
     @GetMapping("productohome/{id}")
@@ -144,4 +150,42 @@ public class HomeController {
         
         return "/usuario/resumenorden";
     }
+    
+    //guardar la orden
+    @GetMapping("/saveOrden")
+    public String saveOrden(){
+        Date fechaCreacion = new Date();
+        orden.setFechaCreacion(fechaCreacion);
+        orden.setNumero(ordenService.generarNumeroOrden());
+        
+        //usuario
+        Usuario usuario = usuarioService.findById(1).get();
+        orden.setUsuario(usuario);
+        ordenService.save(orden);
+        
+        //guardarDetaller
+        for(DetalleOrden dt : detalles){
+            dt.setOrden(orden);
+            detalleOrdenService.save(dt);
+        }
+        
+        ///limpiar list y otden
+        Orden orden = new Orden();
+        detalles.clear();
+        
+        return "redirect:/";
+    }
+    
+    //funcionalidad para buscar un producto
+    @PostMapping("/search")
+    public String searchProduct(@RequestParam String nombre, Model model){
+        String N = nombre.substring(0, 1).toUpperCase();
+        String ombre = nombre.substring(1,nombre.length()).toLowerCase();
+        String Nombre = N+ombre;
+        logger.info("nombre del Producto: {}", Nombre);
+        List<Producto> productos = productoService.findAll().stream().filter(p -> p.getNombre().contains(Nombre)).collect(Collectors.toList());
+        model.addAttribute("productos", productos);
+        return "usuario/home";
+    }
+    
 }
