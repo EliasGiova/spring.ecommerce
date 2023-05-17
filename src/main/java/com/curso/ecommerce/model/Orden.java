@@ -2,25 +2,63 @@
 package com.curso.ecommerce.model;
 
 import java.util.Date;
+import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "ordenes")
 public class Orden {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    
     private String numero;
     private Date fechaCreacion;
     private Date fechaRecibida;
     
     private double total;
-
+    
+    @ManyToOne
+    private Usuario usuario;
+    
+    @OneToMany (mappedBy = "orden")
+    private List <DetalleOrden> detalle;
+    
     public Orden() {
     }
 
-    public Orden(Integer id, String numero, Date fechaCreacion, Date fechaRecibida, double total) {
+    public Orden(Integer id, String numero, Date fechaCreacion, Date fechaRecibida, double total, Usuario usuario, List<DetalleOrden> detalle) {
         this.id = id;
         this.numero = numero;
         this.fechaCreacion = fechaCreacion;
         this.fechaRecibida = fechaRecibida;
         this.total = total;
+        this.usuario = usuario;
+        this.detalle = detalle;
     }
+
+    public List<DetalleOrden> getDetalle() {
+        return detalle;
+    }
+
+    public void setDetalle(List<DetalleOrden> detalle) {
+        this.detalle = detalle;
+    }
+    
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
 
     public Integer getId() {
         return id;
@@ -66,6 +104,4 @@ public class Orden {
     public String toString() {
         return "Orden{" + "id=" + id + ", numero=" + numero + ", fechaCreacion=" + fechaCreacion + ", fechaRecibida=" + fechaRecibida + ", total=" + total + '}';
     }
-    
-    
 }
